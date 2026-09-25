@@ -1,6 +1,6 @@
-# Locale Studio
+# Locale Studio — Windows Locale Emulator
 
-Ứng dụng Windows giúp quản lý thư viện game/app và khởi chạy với locale riêng.
+**Locale Studio** là công cụ giả lập locale trên Windows, giúp chạy game và ứng dụng x86/x64 với locale riêng mà không thay đổi locale hệ thống. Ứng dụng có thư viện lưu các game/app đã chạy và giao diện tiếng Việt/tiếng Anh.
 
 **Tác giả: Dat Diep** · [English](../README.md)
 

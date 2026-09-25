@@ -1,6 +1,6 @@
-# Locale Studio
+# Locale Studio — Windows Locale Emulator
 
-A Windows desktop launcher for running games and applications with a per-application locale, with a persistent library and an English/Vietnamese interface.
+**Locale Studio** is a Windows locale emulator that launches x86 and x64 games and applications with per-app locale settings, without changing your system locale. It includes a persistent application library and an English/Vietnamese interface.
 
 **Author: Dat Diep** · [Tiếng Việt](docs/README.vi.md) · [Architecture](docs/ARCHITECTURE.md)
 
