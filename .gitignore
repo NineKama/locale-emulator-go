@@ -5,6 +5,7 @@
 /build/tmp/
 /build/logs/
 /build/reports/
+/build/release/
 /build/source-review/
 /.cache/
 /.tools/

@@ -56,4 +56,6 @@ npm --prefix frontend run check
 
 Native baseline có thể báo `FAIL` khi system locale không phải Nhật; đây là đối chứng. Các lần chạy qua engine phải `PASS`. Chi tiết kiến trúc, các kiểm thử và hướng dẫn chia sẻ nằm trong [README tiếng Anh](../README.md) và [hướng dẫn publish](PUBLISHING.md).
 
-Chưa chọn giấy phép cho project. Tên tác giả được giữ trong [AUTHORS.md](../AUTHORS.md).
+Project sử dụng [MIT License](../LICENSE). Tên tác giả được giữ trong [AUTHORS.md](../AUTHORS.md).
+
+CI tự build ZIP và tạo Release khi push tag phiên bản. Xem [hướng dẫn release](PUBLISHING.md#automated-zip-releases).

@@ -136,4 +136,6 @@ Identifiers, comments and backend diagnostics are English. Translations are data
 
 See [Publishing and privacy](docs/PUBLISHING.md) for the source audit, generated-file exclusions and release packaging. There are no game files or personal library records in the intended source set.
 
-A project license has not been selected yet. Author attribution is recorded in [AUTHORS.md](AUTHORS.md); dependencies retain their own licenses and notices.
+Licensed under the [MIT License](LICENSE). Author attribution is recorded in [AUTHORS.md](AUTHORS.md); dependencies retain their own licenses and notices.
+
+For automated Windows ZIP releases, see [Automated ZIP releases](docs/PUBLISHING.md#automated-zip-releases).

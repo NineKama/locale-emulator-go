@@ -44,7 +44,42 @@ to avoid embedding local Go source paths.
 ## Repository and license
 
 Choose a GitHub repository and review the commit contents before pushing.
-No remote or automatic upload is configured by these scripts.
-No project license has been selected. Choose a license before inviting reuse;
+The release workflow below uploads build assets only when run for a tag.
+The project uses the MIT License in `LICENSE`;
 author attribution alone does not grant permission to reuse the code.
 Preserve applicable dependency licenses when distributing binaries.
+
+## Automated ZIP releases
+
+Push a version tag after committing and pushing the workflow:
+
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+The `Windows release` workflow builds on Windows, runs x86/x64 unit and native
+integration tests, checks the frontend, and publishes a GitHub Release only after
+all checks pass. Tags containing a hyphen (for example `v0.3.0-beta.1`) produce
+prereleases. Use a new version tag for each published release.
+
+Users download `Locale-Studio-<version>-windows-x64.zip`, extract it, and open
+`locale-emulator-go.exe`. The archive contains the four runtime files plus the
+project license and author attribution. The x64 desktop app supports both x86
+and x64 target applications. WebView2 Runtime is required. A companion `.sha256`
+file is published for download verification.
+
+You can also run **Actions > Windows release > Run workflow** on `main` to build
+a downloadable artifact without publishing a release. A manual run on a version
+tag publishes that tag. No personal access token is required: only the release
+job receives `contents: write` through GitHub's built-in token.
+
+To package an existing local build:
+
+```powershell
+./scripts/package.ps1 -Version v0.2.0
+```
+
+Output goes to ignored `build/release/`. The first GitHub run still needs to be
+verified on the hosted runner; local packaging validation does not exercise
+GitHub permissions or the hosted environment.
