@@ -38,5 +38,9 @@
   "success": "Đã khởi chạy ứng dụng ({architecture}, PID {pid}).",
   "fileDialogTitle": "Chọn ứng dụng Windows x86 / x64",
   "executableFilter": "Ứng dụng Windows",
-  "languageName": "Tiếng Việt"
+  "languageName": "Tiếng Việt",
+  "contextMenuHint": "Thêm Open in Locale Studio vào menu chuột phải của file EXE. Trên Windows 11, xem trong Show more options. Bật lại nếu bạn di chuyển app.",
+  "contextMenuDisable": "Tắt menu chuột phải",
+  "contextMenu": "Tích hợp Explorer",
+  "contextMenuEnable": "Bật menu chuột phải"
 }

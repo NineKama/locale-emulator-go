@@ -16,6 +16,10 @@ try {
   if($LASTEXITCODE){throw "Tests failed: $arch"}
  }
  $env:GOARCH='amd64'
+ go test -trimpath -c -o build/tests/integration-tests.exe ./internal/integration
+ if($LASTEXITCODE){throw 'Explorer integration test build failed'}
+ & ./build/tests/integration-tests.exe '-test.v'
+ if($LASTEXITCODE){throw 'Explorer integration tests failed'}
  go test -trimpath -c -o build/tests/library-tests.exe ./internal/library
  if($LASTEXITCODE){throw 'Library test build failed'}
  & ./build/tests/library-tests.exe '-test.v'

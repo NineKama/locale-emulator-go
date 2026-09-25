@@ -76,6 +76,24 @@ Build optional CLI and test tools separately:
 
 Development tools go to `build/tests/`; generated DLL headers go to `build/generated/`. Neither directory belongs in the source repository or the runtime package.
 
+
+## Explorer context menu
+
+Open Locale Studio and click **Enable context menu** under **Explorer integration**.
+Then right-click a native `.exe` and choose **Open in Locale Studio** to launch it
+through the engine automatically. On Windows 11, the entry may be under **Show
+more options**. Requests go to the existing window when Locale Studio is running;
+otherwise it opens first. Successful launches also enter the application library.
+
+Registration applies only to the current Windows user and does not require admin
+rights or replace the normal double-click action. Use **Disable context menu**
+before deleting the portable app. After moving the app folder, enable the menu
+again from the new location. Keep all four runtime files together.
+
+The equivalent command is `locale-emulator-go.exe --launch "C:\Apps\game.exe"`.
+The integration accepts one EXE at a time; shortcuts and extra game arguments are
+not supported by this command.
+
 ## Library and local data
 
 Successful GUI launches are recorded in `%APPDATA%\LocaleStudio\library.json`. The library stores executable paths, names, architecture, last-launch time and launch count. Removing an entry **does not delete the application or its save files**.

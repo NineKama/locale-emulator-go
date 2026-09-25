@@ -90,6 +90,10 @@ func callRemote(process windows.Handle, address, arg uintptr) (uint32, error) {
 // Launch handles a newly created process of the same architecture. Start
 // routes cross-architecture requests to a matching helper before calling this.
 func Launch(target, dll string) (uint32, error) {
+	return launch(target, dll, false)
+}
+
+func launch(target, dll string, native bool) (uint32, error) {
 	launchMu.Lock()
 	defer launchMu.Unlock()
 	runtime.LockOSThread()
@@ -101,23 +105,26 @@ func Launch(target, dll string) (uint32, error) {
 	if arch != runtime.GOARCH {
 		return 0, fmt.Errorf("launcher %s cannot run target %s", runtime.GOARCH, arch)
 	}
-	dll, e = filepath.Abs(dll)
-	if e != nil {
-		return 0, e
-	}
-	if _, e = os.Stat(dll); e != nil {
-		return 0, fmt.Errorf("Engine DLL missing beside the application: %w", e)
-	}
-	// Never unload a Go DLL while its runtime threads are alive.
-	if engineLib == nil {
-		engineLib, e = windows.LoadDLL(dll)
+	var install *windows.Proc
+	if !native {
+		dll, e = filepath.Abs(dll)
 		if e != nil {
-			return 0, fmt.Errorf("Load engine: %w", e)
+			return 0, e
 		}
-	}
-	install, e := engineLib.FindProc("InstallLocale")
-	if e != nil {
-		return 0, e
+		if _, e = os.Stat(dll); e != nil {
+			return 0, fmt.Errorf("Engine DLL missing beside the application: %w", e)
+		}
+		// Never unload a Go DLL while its runtime threads are alive.
+		if engineLib == nil {
+			engineLib, e = windows.LoadDLL(dll)
+			if e != nil {
+				return 0, fmt.Errorf("Load engine: %w", e)
+			}
+		}
+		install, e = engineLib.FindProc("InstallLocale")
+		if e != nil {
+			return 0, e
+		}
 	}
 	app, e := windows.UTF16PtrFromString(target)
 	if e != nil {
@@ -150,10 +157,21 @@ func Launch(target, dll string) (uint32, error) {
 			windows.WaitForSingleObject(pi.Process, 5000)
 		}
 	}()
-	if e = waitForLoader(pi); e != nil {
+	var imageBase uintptr
+	if e = waitForLoader(pi, &imageBase); e != nil {
 		return 0, e
 	}
 	debugging = false
+	if native {
+		if e = installNative386(pi.Process, pi.ProcessId, imageBase, target); e != nil {
+			return 0, e
+		}
+		if _, e = windows.ResumeThread(pi.Thread); e != nil {
+			return 0, e
+		}
+		success = true
+		return pi.ProcessId, nil
+	}
 	path, e := windows.UTF16FromString(dll)
 	if e != nil {
 		return 0, e
@@ -209,7 +227,7 @@ func Launch(target, dll string) (uint32, error) {
 // Suspend the primary thread there, detach, then install outside loader lock.
 // TLS callbacks / dependency DllMain may already have run: deliberately outside
 // the compatibility promise of this MVP.
-func waitForLoader(pi windows.ProcessInformation) error {
+func waitForLoader(pi windows.ProcessInformation, imageBase *uintptr) error {
 	type debugEvent struct {
 		Code, PID, TID uint32
 		Union          [164]byte // includes 4-byte alignment padding on AMD64
@@ -251,6 +269,9 @@ func waitForLoader(pi windows.ProcessInformation) error {
 				windows.CloseHandle(h)
 			}
 			if ev.Code == 3 {
+				// CREATE_PROCESS_DEBUG_INFO gives the actual mapped image base,
+				// independent of short paths, aliases or non-ASCII file names.
+				*imageBase = *(*uintptr)(unsafe.Pointer(&data[3*unsafe.Sizeof(uintptr(0))]))
 				entry = *(*uintptr)(unsafe.Pointer(&data[debugEntryOffset]))
 				if entry == 0 {
 					return fmt.Errorf("No entry point found")

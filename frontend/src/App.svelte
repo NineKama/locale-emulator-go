@@ -1,11 +1,15 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import { library } from '../wailsjs/go/models'
+  import { EventsOn } from '../wailsjs/runtime/runtime'
   import {
     SelectExecutable,
     Launch,
     GetLibrary,
     RemoveFromLibrary,
+    ContextMenuEnabled,
+    SetContextMenuEnabled,
+    TakeLaunchRequests,
   } from '../wailsjs/go/main/App'
   import {
     copy,
@@ -24,6 +28,40 @@
   let libraryLoading = $state(true)
   let libraryError = $state('')
   let saveWarning = $state(false)
+  let contextMenuEnabled = $state(false)
+  let contextMenuBusy = $state(true)
+  let contextMenuError = $state('')
+  let requestChain = Promise.resolve()
+
+  function receiveLaunchRequests() {
+    // Serialize Explorer requests and wait for an active UI action to finish.
+    requestChain = requestChain
+      .then(async () => {
+        const paths = await TakeLaunchRequests()
+        for (const path of paths) {
+          while (pending !== null)
+            await new Promise((resolve) => setTimeout(resolve, 100))
+          await run(path)
+        }
+      })
+      .catch((e) => {
+        error = String(e)
+        status = 'launchError'
+      })
+  }
+
+  async function toggleContextMenu() {
+    contextMenuBusy = true
+    contextMenuError = ''
+    try {
+      await SetContextMenuEnabled(!contextMenuEnabled)
+      contextMenuEnabled = await ContextMenuEnabled()
+    } catch (e) {
+      contextMenuError = String(e)
+    } finally {
+      contextMenuBusy = false
+    }
+  }
   const filtered = $derived(
     entries.filter((entry) =>
       `${entry.name} ${entry.path}`
@@ -33,6 +71,19 @@
   )
   onMount(() => {
     void refreshLibrary()
+    const unsubscribe = EventsOn('launch-requested', receiveLaunchRequests)
+    receiveLaunchRequests()
+    void ContextMenuEnabled()
+      .then((value) => {
+        contextMenuEnabled = value
+      })
+      .catch((e) => {
+        contextMenuError = String(e)
+      })
+      .finally(() => {
+        contextMenuBusy = false
+      })
+    return unsubscribe
   })
   async function refreshLibrary() {
     libraryLoading = true
@@ -290,6 +341,14 @@
         </details>{/if}
     </section>
   </div>
+  <aside>
+    <strong>{t.contextMenu}</strong>
+    <p>{t.contextMenuHint}</p>
+    <button onclick={toggleContextMenu} disabled={contextMenuBusy}>
+      {contextMenuEnabled ? t.contextMenuDisable : t.contextMenuEnable}
+    </button>
+    {#if contextMenuError}<p role="alert">{contextMenuError}</p>{/if}
+  </aside>
   <aside>
     <strong>{t.scope}</strong>
     <p>{t.limits}</p>

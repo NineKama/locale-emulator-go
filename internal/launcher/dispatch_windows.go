@@ -27,6 +27,9 @@ func Start(target, dll string) (Result, error) {
 		return Result{}, e
 	}
 	dir := filepath.Dir(exe)
+	// Default x86 launches use native code generated in the helper, avoiding a
+	// Go runtime inside the game. An explicit DLL override remains diagnostic-only.
+	native := dll == "" && arch == "386"
 	if dll == "" {
 		name := "locale-engine.dll"
 		if arch == "386" {
@@ -39,7 +42,7 @@ func Start(target, dll string) (Result, error) {
 		return Result{}, e
 	}
 	if arch == runtime.GOARCH {
-		pid, e := Launch(target, dll)
+		pid, e := launch(target, dll, native)
 		return Result{pid, arch}, e
 	}
 	if runtime.GOARCH != "amd64" || arch != "386" {
@@ -49,7 +52,11 @@ func Start(target, dll string) (Result, error) {
 	if _, e = os.Stat(helper); e != nil {
 		return Result{}, fmt.Errorf("x86 helper missing beside the application: %w", e)
 	}
-	cmd := exec.Command(helper, "-json", "-engine", dll, target)
+	args := []string{"-json", target}
+	if !native {
+		args = []string{"-json", "-engine", dll, target}
+	}
+	cmd := exec.Command(helper, args...)
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true, CreationFlags: 0x08000000}
 	out, e := cmd.Output()
 	if e != nil {

@@ -7,6 +7,10 @@
 ## Tính năng
 
 - Chỉ mở một cửa sổ; mở app lần nữa sẽ đưa cửa sổ hiện tại lên trước.
+- Bật **menu chuột phải** trong mục **Tích hợp Explorer**, rồi nhấp phải file EXE
+  và chọn **Open in Locale Studio** để chạy qua engine. Trên Windows 11, mục này
+  có thể nằm trong **Show more options**. Không cần quyền Administrator.
+  Tắt menu trước khi xóa app; bật lại từ vị trí mới nếu di chuyển thư mục app.
 - Chạy ứng dụng native x86 và x64, tự chọn engine phù hợp.
 - Tự lưu ứng dụng đã chạy vào thư viện; có tìm kiếm và sắp xếp gần nhất.
 - Mở lại từ thư viện mà không cần chọn file mỗi lần.
