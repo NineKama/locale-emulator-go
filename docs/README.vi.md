@@ -6,6 +6,7 @@
 
 ## Tính năng
 
+- Chỉ mở một cửa sổ; mở app lần nữa sẽ đưa cửa sổ hiện tại lên trước.
 - Chạy ứng dụng native x86 và x64, tự chọn engine phù hợp.
 - Tự lưu ứng dụng đã chạy vào thư viện; có tìm kiếm và sắp xếp gần nhất.
 - Mở lại từ thư viện mà không cần chọn file mỗi lần.

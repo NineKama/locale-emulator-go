@@ -31,7 +31,7 @@ The supported ANSI bridges currently include `CreateFileA`, `GetFileAttributesA`
 
 `internal/library` stores versioned JSON under the Windows user configuration directory. Mutations are serialized within one application instance. Writes use a temporary file in the same directory followed by replacement. Invalid or unsupported stored documents are not silently overwritten.
 
-Path comparison is case-insensitive for ordinary Windows executable paths. Availability is checked when reading the list. Concurrent independent GUI instances are not coordinated by an inter-process lock; use one instance when updating the same library.
+Path comparison is case-insensitive for ordinary Windows executable paths. Availability is checked when reading the list. The desktop application uses Wails single-instance locking with a stable application ID. A second launch requests that the existing window be restored and focused. The library store itself does not provide an inter-process lock for independent external writers.
 
 ## Frontend and translations
 

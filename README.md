@@ -6,6 +6,7 @@
 
 ## Features
 
+- Keep one desktop instance; opening the app again brings the existing window forward.
 - Launch native **x86 and x64** applications from one interface.
 - Automatically select the matching engine and helper.
 - Save successfully launched applications to a searchable library, sorted by recent use.

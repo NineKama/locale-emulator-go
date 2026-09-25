@@ -27,6 +27,11 @@ func main() {
 		},
 		BackgroundColour: &options.RGBA{R: 16, G: 20, B: 29, A: 255},
 		OnStartup:        app.startup,
+		SingleInstanceLock: &options.SingleInstanceLock{
+			// Keep this ID stable across versions and portable installation paths.
+			UniqueId:               "9e5cd41a-2681-4cff-abe2-8a9dd8a7b7d1",
+			OnSecondInstanceLaunch: app.onSecondInstanceLaunch,
+		},
 		Bind: []interface{}{
 			app,
 		},
