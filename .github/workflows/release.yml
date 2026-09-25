@@ -42,6 +42,7 @@ jobs:
           if ((Get-FileHash $archive -Algorithm SHA256).Hash -ne $expected) { throw 'Compiler checksum mismatch' }
           Expand-Archive -LiteralPath $archive -DestinationPath $env:RUNNER_TEMP
           $bin = Join-Path $env:RUNNER_TEMP "$name/bin"
+          "LOCALE_TOOLCHAIN_ROOT=$(Join-Path $env:RUNNER_TEMP $name)" >> $env:GITHUB_ENV
           "CC=$bin/x86_64-w64-mingw32-clang.exe" >> $env:GITHUB_ENV
           "CC32=$bin/i686-w64-mingw32-clang.exe" >> $env:GITHUB_ENV
           $bin >> $env:GITHUB_PATH

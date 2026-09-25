@@ -65,7 +65,8 @@ prereleases. Use a new version tag for each published release.
 
 Users download `Locale-Studio-<version>-windows-x64.zip`, extract it, and open
 `locale-emulator-go.exe`. The archive contains the four runtime files plus the
-project license and author attribution. The x64 desktop app supports both x86
+project license, author attribution and generated `THIRD-PARTY-NOTICES.txt`.
+The x64 desktop app supports both x86
 and x64 target applications. WebView2 Runtime is required. A companion `.sha256`
 file is published for download verification.
 
@@ -77,8 +78,14 @@ job receives `contents: write` through GitHub's built-in token.
 To package an existing local build:
 
 ```powershell
-./scripts/package.ps1 -Version v0.2.0
+./scripts/package.ps1 -Version v0.2.0 -ToolchainRoot 'path/to/llvm-mingw'
 ```
+
+Pass the compiler distribution root (not its `bin` directory). For mixed builds,
+pass every compiler root as a PowerShell array. Node.js, the matching Go toolchain,
+Go dependency sources and the frontend's installed lockfile dependencies are
+required for notice generation. CI sets `LOCALE_TOOLCHAIN_ROOT` automatically.
+See [Third-party notices](../THIRD-PARTY.md) for scope and known exceptions.
 
 Output goes to ignored `build/release/`. The first GitHub run still needs to be
 verified on the hosted runner; local packaging validation does not exercise

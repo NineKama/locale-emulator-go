@@ -58,4 +58,7 @@ Native baseline có thể báo `FAIL` khi system locale không phải Nhật; đ
 
 Project sử dụng [MIT License](../LICENSE). Tên tác giả được giữ trong [AUTHORS.md](../AUTHORS.md).
 
+ZIP phát hành kèm `THIRD-PARTY-NOTICES.txt` chứa thông báo bản quyền và license
+của dependency. Xem [phạm vi thu thập và cách cập nhật](../THIRD-PARTY.md).
+
 CI tự build ZIP và tạo Release khi push tag phiên bản. Xem [hướng dẫn release](PUBLISHING.md#automated-zip-releases).

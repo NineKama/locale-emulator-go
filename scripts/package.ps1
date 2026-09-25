@@ -1,7 +1,8 @@
 param(
     [Parameter(Mandatory)]
     [ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._-]*$')]
-    [string]$Version
+    [string]$Version,
+    [string[]]$ToolchainRoot = @($env:LOCALE_TOOLCHAIN_ROOT)
 )
 
 $ErrorActionPreference = 'Stop'
@@ -9,11 +10,17 @@ $project = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $output = Join-Path $project 'build/release'
 New-Item -ItemType Directory -Force $output | Out-Null
 
+# Regenerate notices for every package so dependency changes cannot reuse stale text.
+if (!$ToolchainRoot.Count -or !$ToolchainRoot[0]) { throw 'Pass -ToolchainRoot for each compiler distribution used to build the binaries.' }
+& node (Join-Path $PSScriptRoot 'third-party-notices.mjs') @ToolchainRoot
+if ($LASTEXITCODE) { throw 'Third-party notice generation failed' }
+
 # Explicit inputs keep development tools and local user data out of the archive.
 $names = @('locale-emulator-go.exe', 'locale-run-x86.exe', 'locale-engine.dll', 'locale-engine-x86.dll')
 $files = @($names | ForEach-Object { Join-Path $project "build/bin/$_" })
 $files += Join-Path $project 'LICENSE'
 $files += Join-Path $project 'AUTHORS.md'
+$files += Join-Path $output 'THIRD-PARTY-NOTICES.txt'
 foreach ($file in $files) {
     if (!(Test-Path -LiteralPath $file -PathType Leaf)) { throw "Missing release input: $file" }
 }

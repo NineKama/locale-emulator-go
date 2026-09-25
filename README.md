@@ -138,4 +138,7 @@ See [Publishing and privacy](docs/PUBLISHING.md) for the source audit, generated
 
 Licensed under the [MIT License](LICENSE). Author attribution is recorded in [AUTHORS.md](AUTHORS.md); dependencies retain their own licenses and notices.
 
+Portable releases include generated third-party license texts. See
+[Third-party notices](THIRD-PARTY.md) for their scope and update procedure.
+
 For automated Windows ZIP releases, see [Automated ZIP releases](docs/PUBLISHING.md#automated-zip-releases).
